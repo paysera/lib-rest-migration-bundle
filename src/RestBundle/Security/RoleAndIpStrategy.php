@@ -15,8 +15,8 @@ class RoleAndIpStrategy implements SecurityStrategyInterface
     private $tokenStorage;
     private $logger;
 
-    private $roles = [];
-    private $ips = [];
+    private $roles;
+    private $ips;
 
     /**
      * @param RoleHierarchy $roleHierarchy
@@ -24,13 +24,15 @@ class RoleAndIpStrategy implements SecurityStrategyInterface
      * @param LoggerInterface $logger
      */
     public function __construct(
-        $roleHierarchy,
+        RoleHierarchy $roleHierarchy,
         TokenStorageInterface $tokenStorage,
         LoggerInterface $logger
     ) {
         $this->roleHierarchy = $roleHierarchy;
         $this->tokenStorage = $tokenStorage;
         $this->logger = $logger;
+        $this->roles = [];
+        $this->ips = [];
     }
 
     public function setRoles(array $roles)

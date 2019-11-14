@@ -13,8 +13,15 @@ class RestApiTest extends TestCase
 {
     private $serviceContainer;
     private $logger;
-    private $messageStorage = [];
-    private $controllerKey = 'Key:Key';
+    private $messageStorage;
+    private $controllerKey;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->messageStorage = [];
+        $this->controllerKey = 'Key:Key';
+    }
 
     public function setUp()
     {

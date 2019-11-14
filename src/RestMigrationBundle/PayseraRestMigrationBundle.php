@@ -16,7 +16,7 @@ class PayseraRestMigrationBundle extends Bundle
      * This method can be overridden to register compilation passes,
      * other extensions, ...
      *
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     * @param ContainerBuilder $container
      */
     public function build(ContainerBuilder $container)
     {

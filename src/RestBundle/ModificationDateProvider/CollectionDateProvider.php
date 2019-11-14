@@ -30,4 +30,4 @@ class CollectionDateProvider implements ModificationDateProviderInterface
         }
         return $lastDate;
     }
-} 
+}

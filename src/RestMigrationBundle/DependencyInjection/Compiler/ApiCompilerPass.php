@@ -12,7 +12,7 @@ class ApiCompilerPass implements CompilerPassInterface
     /**
      * Run the Compiler and process all Passes.
      *
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {
@@ -29,7 +29,7 @@ class ApiCompilerPass implements CompilerPassInterface
      * @param string $methodName
      * @param bool $ignoreOnNoAttribute
      *
-     * @throws \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @throws InvalidConfigurationException
      */
     protected function processTags($container, $tag, $attributeName, $methodName, $ignoreOnNoAttribute = false)
     {

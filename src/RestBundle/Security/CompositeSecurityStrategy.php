@@ -9,8 +9,7 @@ class CompositeSecurityStrategy implements SecurityStrategyInterface
     /**
      * @var SecurityStrategyInterface[]
      */
-    protected $strategies = array();
-
+    protected $strategies;
 
     public function __construct($strategies)
     {
@@ -27,4 +26,4 @@ class CompositeSecurityStrategy implements SecurityStrategyInterface
 
         return true;
     }
-} 
+}

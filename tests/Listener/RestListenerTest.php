@@ -71,9 +71,16 @@ class RestListenerTest extends TestCase
      */
     private $exceptionLogger;
 
-    private $storedLoggerMessages = [];
+    private $storedLoggerMessages;
 
-    private $storedContext = [];
+    private $storedContext;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->storedLoggerMessages = [];
+        $this->storedContext = [];
+    }
 
     public function setUp()
     {

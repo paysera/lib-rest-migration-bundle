@@ -18,7 +18,7 @@ abstract class ValidatorAwareDenormalizer extends BaseDenormalizer
     /**
      * Called from configuration
      *
-     * @param ValidatorInterface $validator
+     * @param ValidatorInterface|\Symfony\Component\Validator\ValidatorInterface $validator
      */
     public function setValidator($validator)
     {
@@ -41,7 +41,7 @@ abstract class ValidatorAwareDenormalizer extends BaseDenormalizer
         $violationList = $this->validator->validate($entity, $groups);
         if ($violationList->count() > 0) {
             $message = null;
-            $properties = array();
+            $properties = [];
 
             /** @var ConstraintViolation $violation */
             foreach ($violationList as $violation) {

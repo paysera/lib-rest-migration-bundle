@@ -12,12 +12,26 @@ class RestResponse
     /**
      * @var array
      */
-    protected $headers = array();
+    protected $headers;
 
     /**
      * @var array
      */
-    protected $options = array();
+    protected $options;
+
+    /**
+     * Constructs object
+     *
+     * @param mixed $response
+     * @param array $headers
+     */
+    public function __construct($response, $headers = [])
+    {
+        $this->setResponse($response);
+        $this->setHeaders($headers);
+        $this->headers = [];
+        $this->options = [];
+    }
 
     /**
      * @param mixed $response
@@ -27,18 +41,6 @@ class RestResponse
     public static function create($response)
     {
         return new static($response);
-    }
-
-    /**
-     * Constructs object
-     *
-     * @param mixed $response
-     * @param array $headers
-     */
-    public function __construct($response, $headers = array())
-    {
-        $this->setResponse($response);
-        $this->setHeaders($headers);
     }
 
     /**
@@ -55,8 +57,7 @@ class RestResponse
      * Sets response
      *
      * @param mixed $response
-
-     * @return self
+     * @return $this
      */
     public function setResponse($response)
     {
@@ -78,8 +79,7 @@ class RestResponse
      * Sets headers
      *
      * @param array $headers
-
-     * @return self
+     * @return $this
      */
     public function setHeaders(array $headers)
     {
@@ -91,8 +91,7 @@ class RestResponse
      * Adds header
      *
      * @param string $header
-
-     * @return self
+     * @return $this
      */
     public function addHeader($header)
     {
@@ -118,7 +117,7 @@ class RestResponse
      * Sets options
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return $this
      */

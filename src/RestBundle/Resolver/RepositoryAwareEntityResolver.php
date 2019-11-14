@@ -25,7 +25,7 @@ class RepositoryAwareEntityResolver implements EntityResolverInterface
     public function resolveFrom($value)
     {
         return $this->repository->findOneBy(
-            array($this->searchField => $value)
+            [$this->searchField => $value]
         );
     }
 }

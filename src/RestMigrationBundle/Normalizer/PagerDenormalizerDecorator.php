@@ -45,7 +45,7 @@ class PagerDenormalizerDecorator implements ObjectDenormalizerInterface, TypeAwa
 
         if ($orderDirection !== null) {
             $orderDirection = mb_strtolower($orderDirection);
-            if (!in_array($orderDirection, array('asc', 'desc'))) {
+            if (!in_array($orderDirection, ['asc', 'desc'], true)) {
                 throw new InvalidItemException('order_direction', 'order_direction must be asc or desc');
             }
         }

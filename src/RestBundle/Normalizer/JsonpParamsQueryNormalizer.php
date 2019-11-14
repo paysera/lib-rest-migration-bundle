@@ -28,4 +28,4 @@ class JsonpParamsQueryNormalizer implements DenormalizerInterface
         }
         return $params;
     }
-} 
+}

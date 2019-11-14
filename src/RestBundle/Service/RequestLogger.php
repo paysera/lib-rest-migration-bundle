@@ -25,18 +25,18 @@ class RequestLogger
     public function log(Request $request, $parts)
     {
         if ($parts['url']) {
-            $this->logger->debug('Request url', array(
+            $this->logger->debug('Request url', [
                 'Url' => $request->getRequestUri(),
-            ));
+            ]);
         }
         if ($parts['header']) {
-            $this->logger->debug('Request header', array(
+            $this->logger->debug('Request header', [
                 'Authorization' => $request->headers->get('AUTHORIZATION'),
                 'Content-Type' => $request->headers->get('CONTENT_TYPE'),
-            ));
+            ]);
         }
         if ($parts['content'] && $content = $request->getContent()) {
-            $this->logger->debug('Request content', array($content));
+            $this->logger->debug('Request content', [$content]);
         }
     }
 }

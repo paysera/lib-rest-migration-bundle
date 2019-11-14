@@ -14,23 +14,29 @@ use Psr\Log\NullLogger;
 
 class RoleAndIpStrategyTest extends TestCase
 {
-    private $roleHierarchy = [
-        'ROLE_SUPER_ADMIN' => [
-            'ROLE_ADMIN',
-            'ROLE_USER',
-        ],
-        'ROLE_ADMIN' => [
-            'ROLE_USER',
-        ],
-        'ROLE_FEATURE_MANAGER' => [
-            'ROLE_USER',
-        ],
-    ];
+    private $roleHierarchy;
 
     /**
      * @var RoleAndIpStrategy
      */
     private $strategy;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->roleHierarchy = [
+            'ROLE_SUPER_ADMIN' => [
+                'ROLE_ADMIN',
+                'ROLE_USER',
+            ],
+            'ROLE_ADMIN' => [
+                'ROLE_USER',
+            ],
+            'ROLE_FEATURE_MANAGER' => [
+                'ROLE_USER',
+            ],
+        ];
+    }
 
     public function setUp()
     {

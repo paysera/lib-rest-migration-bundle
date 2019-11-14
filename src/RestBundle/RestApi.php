@@ -21,6 +21,9 @@ use Paysera\Bundle\RestBundle\Entity\ErrorConfig;
 use Paysera\Bundle\RestBundle\Security\SecurityStrategyInterface;
 use Paysera\Component\Serializer\Normalizer\NormalizerInterface;
 
+/**
+ * @php-cs-fixer-ignore Paysera/php_basic_feature_type_hinting
+ */
 class RestApi
 {
     const DEFAULT_VALIDATION_GROUP = 'Default';
@@ -43,7 +46,7 @@ class RestApi
     /**
      * @var array[]
      */
-    protected $requestLoggingParts = array();
+    protected $requestLoggingParts;
 
     /**
      * @var string[]
@@ -63,17 +66,17 @@ class RestApi
     /**
      * @var string[]
      */
-    protected $requestFormats = array();
+    protected $requestFormats;
 
     /**
      * @var string[]
      */
-    protected $responseFormats = array();
+    protected $responseFormats;
 
     /**
      * @var CacheStrategyInterface[]
      */
-    protected $cacheStrategies = array();
+    protected $cacheStrategies;
 
     /**
      * @var ErrorConfig
@@ -98,17 +101,17 @@ class RestApi
     /**
      * @var array
      */
-    private $globalValidationGroups = [self::DEFAULT_VALIDATION_GROUP];
+    private $globalValidationGroups;
 
     /**
      * @var array
      */
-    private $validationGroups = [];
+    private $validationGroups;
 
     /**
      * @var PropertyPathConverterInterface[]
      */
-    protected $controllerPropertyPathConverters = [];
+    protected $controllerPropertyPathConverters;
 
     /**
      * @var PropertyPathConverterInterface
@@ -119,7 +122,7 @@ class RestApi
      * Constructs object
      *
      * @param ContainerInterface $serviceContainer
-     * @param LoggerInterface                                           $logger
+     * @param LoggerInterface $logger
      */
     public function __construct(
         ContainerInterface $serviceContainer,
@@ -132,6 +135,13 @@ class RestApi
         $this->propertyPathConverter = $serviceContainer
             ->get('paysera_rest.service.property_path_converter.camel_case_to_snake_case')
         ;
+        $this->requestLoggingParts = [];
+        $this->requestFormats = [];
+        $this->responseFormats = [];
+        $this->cacheStrategies = [];
+        $this->globalValidationGroups = [self::DEFAULT_VALIDATION_GROUP];
+        $this->validationGroups = [];
+        $this->controllerPropertyPathConverters = [];
     }
 
     /**
@@ -140,7 +150,7 @@ class RestApi
      * @param string $mapperKey service key, service must implement DenormalizerInterface
      * @param string $controllerKey
      * @param string $argumentName
-     * @param array  $validationGroups Validation groups
+     * @param array $validationGroups Validation groups
      * @param PropertyPathConverterInterface|null $propertyPathConverter
      */
     public function addRequestMapper(
@@ -160,10 +170,10 @@ class RestApi
     /**
      * Adds request query mapper for some controller
      *
-     * @param string $mapperKey     service key, service must implement DenormalizerInterface
+     * @param string $mapperKey service key, service must implement DenormalizerInterface
      * @param string $controllerKey
      * @param string $argumentName
-     * @param array  $validationGroups Validation groups
+     * @param array $validationGroups Validation groups
      * @param PropertyPathConverterInterface|null $propertyPathConverter
      */
     public function addRequestQueryMapper(
@@ -183,7 +193,7 @@ class RestApi
     /**
      * Returns denormalizer closure
      *
-     * @param string $mapperKey    Denormalizer mapper key
+     * @param string $mapperKey Denormalizer mapper key
      * @param string $argumentName Denormalizer name
      *
      * @return Closure
@@ -192,7 +202,7 @@ class RestApi
     {
         $serviceContainer = $this->serviceContainer;
 
-        return function() use ($mapperKey, $serviceContainer, $argumentName) {
+        return function () use ($mapperKey, $serviceContainer, $argumentName) {
             $denormalizer = $serviceContainer->get($mapperKey);
             if (!$denormalizer instanceof DenormalizerInterface) {
                 throw new RuntimeException(
@@ -206,8 +216,8 @@ class RestApi
     /**
      * Sets validation group for given controller key, or uses default validation group if given group is empty
      *
-     * @param string $controllerKey   Controller key
-     * @param array  $validationGroups Validation group array
+     * @param string $controllerKey Controller key
+     * @param array $validationGroups Validation group array
      */
     protected function addValidationGroups($controllerKey, array $validationGroups)
     {
@@ -215,7 +225,7 @@ class RestApi
     }
 
     /**
-     * @param string                              $controllerKey
+     * @param string $controllerKey
      * @param PropertyPathConverterInterface|null $propertyPathConverter
      */
     public function addControllerPropertyPathConverter($controllerKey, $propertyPathConverter)
@@ -233,18 +243,18 @@ class RestApi
     {
         $controllerKey = $this->normalizeControllerKey($controllerKey);
         if (!$part) {
-            $this->requestLoggingParts[$controllerKey] = array(
+            $this->requestLoggingParts[$controllerKey] = [
                 'url' => false,
                 'header' => false,
-                'content' => false
-            );
+                'content' => false,
+            ];
         } else {
             if (!isset($this->requestLoggingParts[$controllerKey])) {
-                $this->requestLoggingParts[$controllerKey] = array(
+                $this->requestLoggingParts[$controllerKey] = [
                     'url' => true,
                     'header' => true,
-                    'content' => true
-                );
+                    'content' => true,
+                ];
             }
             $this->requestLoggingParts[$controllerKey][$part] = false;
         }
@@ -263,8 +273,8 @@ class RestApi
         $controllerKey = $this->normalizeControllerKey($controllerKey);
         $serviceContainer = $this->serviceContainer;
 
-        if (empty($this->requestAttributeResolvers[$controllerKey])) {
-            $this->requestAttributeResolvers[$controllerKey] = array();
+        if (!isset($this->requestAttributeResolvers[$controllerKey])) {
+            $this->requestAttributeResolvers[$controllerKey] = [];
         }
 
         $this->requestAttributeResolvers[$controllerKey][] = function () use (
@@ -290,7 +300,7 @@ class RestApi
     /**
      * Adds response mapper for some controller
      *
-     * @param string $mapperKey     service key, service must implement NormalizerInterface
+     * @param string $mapperKey service key, service must implement NormalizerInterface
      * @param string $controllerKey
      */
     public function addResponseMapper($mapperKey, $controllerKey)
@@ -303,14 +313,13 @@ class RestApi
      * Adds response mapper for some controller
      *
      * @param ResponseMapperFactoryInterface $mapperFactory
-     * @param string                                                           $controllerKey
+     * @param string $controllerKey
      */
     public function addResponseMapperFactory(ResponseMapperFactoryInterface $mapperFactory, $controllerKey)
     {
         $controllerKey = $this->normalizeControllerKey($controllerKey);
         $this->responseMapperFactories[$controllerKey] = $mapperFactory;
     }
-
 
     public function addCacheStrategy(CacheStrategyInterface $cacheStrategy, $controllerKey)
     {
@@ -331,7 +340,7 @@ class RestApi
     /**
      * Adds supported response format
      *
-     * @param string                                                    $format
+     * @param string $format
      * @param EncoderFactoryInterface $encoderFactory
      */
     public function addResponseEncoderFactory($format, EncoderFactoryInterface $encoderFactory)
@@ -481,11 +490,11 @@ class RestApi
             return $this->requestLoggingParts[$controllerKey];
         }
 
-        return array(
+        return [
             'url' => true,
             'header' => true,
-            'content' => false
-        );
+            'content' => false,
+        ];
     }
 
     /**
@@ -510,18 +519,18 @@ class RestApi
             );
         }
 
-        return array();
+        return [];
     }
 
     /**
      * Should return response mapper for this controller. If none is set, returns null
      *
      * @param string $controllerKey
-     * @param array  $options
+     * @param array $options
      *
      * @return NormalizerInterface|null
      */
-    public function getResponseMapper($controllerKey, array $options = array())
+    public function getResponseMapper($controllerKey, array $options = [])
     {
         $this->logger->debug('Getting response mapper for ' . $controllerKey);
         $controllerKey = $this->normalizeControllerKey($controllerKey);
@@ -537,11 +546,11 @@ class RestApi
 
     /**
      * @param string $controllerKey
-     * @param array  $options
+     * @param array $options
      *
      * @return CacheStrategyInterface|null
      */
-    public function getCacheStrategy($controllerKey, array $options = array())
+    public function getCacheStrategy($controllerKey, array $options = [])
     {
         if (isset($options[CacheStrategyInterface::NO_CACHE]) && $options[CacheStrategyInterface::NO_CACHE]) {
             return null;
@@ -561,7 +570,7 @@ class RestApi
      */
     public function getAvailableResponseFormats()
     {
-        return empty($this->responseFormats) ? array('json') : $this->responseFormats;
+        return count($this->responseFormats) === 0 ? ['json'] : $this->responseFormats;
     }
 
     /**
@@ -571,7 +580,7 @@ class RestApi
      */
     public function getAvailableRequestFormats()
     {
-        return empty($this->requestFormats) ? array('json') : $this->requestFormats;
+        return count($this->requestFormats) === 0 ? ['json'] : $this->requestFormats;
     }
 
     /**
@@ -590,11 +599,11 @@ class RestApi
      * Returns encoder for specified format. Returns null if default encoder is to be used
      *
      * @param string $format
-     * @param array  $options
+     * @param array $options
      *
      * @return EncoderInterface
      */
-    public function getEncoder($format, array $options = array())
+    public function getEncoder($format, array $options = [])
     {
         return isset($this->encoderFactories[$format])
             ? $this->encoderFactories[$format]->createEncoder($options)
@@ -616,7 +625,7 @@ class RestApi
      *
      * @param string $errorCode
      *
-     * @return array|null    available keys: statusCode, message, uri; value can be null
+     * @return array|null available keys: statusCode, message, uri; value can be null
      */
     public function getErrorConfig($errorCode)
     {

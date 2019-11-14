@@ -56,7 +56,7 @@ class RestListener
         $this->exceptionLogger = $exceptionLogger;
         $this->locales = $locales;
 
-        $this->loggersCache = array();
+        $this->loggersCache = [];
     }
 
     public function onKernelRequest(GetResponseEvent $event)
@@ -99,7 +99,7 @@ class RestListener
         $request = $event->getRequest();
         $logger = $this->getLogger($request);
 
-        $logger->debug('Handling kernel.controller', array($event->getRequest()->attributes->get('_controller')));
+        $logger->debug('Handling kernel.controller', [$event->getRequest()->attributes->get('_controller')]);
 
         if ($this->apiManager->isRestRequest($request) && $parts = $this->apiManager->getRequestLoggingParts($request)) {
             $this->requestLogger->log($request, $parts);
@@ -117,7 +117,7 @@ class RestListener
         $parameterToEntityMap = $this->parameterToEntityMapBuilder->buildParameterToEntityMap($request);
         foreach ($parameterToEntityMap as $parameterName => $entity) {
             $request->attributes->add(
-                array($parameterName => $entity)
+                [$parameterName => $entity]
             );
         }
     }
@@ -133,7 +133,7 @@ class RestListener
         $request = $event->getRequest();
         $logger = $this->getLogger($request);
 
-        $logger->debug('Handling kernel.view', array($event));
+        $logger->debug('Handling kernel.view', [$event]);
 
         if (!$this->apiManager->isRestRequest($request)) {
             $logger->debug('Not rest request');
@@ -147,8 +147,8 @@ class RestListener
             $options = $result->getOptions();
             $result = $result->getResponse();
         } else {
-            $headers = array();
-            $options = array();
+            $headers = [];
+            $options = [];
         }
 
         $response = new Response(null, 200, $headers);
@@ -164,7 +164,7 @@ class RestListener
             if ($modifiedAt !== null) {
                 $logger->debug(
                     'Setting modified at',
-                    array($modifiedAt, $request->headers->get('If-Modified-Since'))
+                    [$modifiedAt, $request->headers->get('If-Modified-Since')]
                 );
                 $response->setLastModified($modifiedAt);
                 $etag = $modifiedAt->getTimestamp();
@@ -202,7 +202,7 @@ class RestListener
                     $responseMapper = $this->normalizerFactory->create($responseMapper);
                 }
                 $context = new NormalizationContext();
-                $context->setFields(array($fields));
+                $context->setFields([$fields]);
                 $content = $responseMapper->mapFromEntity($result, $context);
             } else {
                 $content = $responseMapper->mapFromEntity($result);
@@ -239,13 +239,13 @@ class RestListener
         $request = $event->getRequest();
         $logger = $this->getLogger($request);
 
-        $logger->debug('Handling kernel.exception', array($event));
+        $logger->debug('Handling kernel.exception', [$event]);
         $logger->debug($event->getException());
 
         $response = $this->apiManager->getResponseForException($request, $event->getException());
         if ($response !== null) {
             $event->setResponse($response);
-            $logger->debug('Setting error response', array($response->getContent()));
+            $logger->debug('Setting error response', [$response->getContent()]);
             $exception = $event->getException();
 
             $this->exceptionLogger->log($logger, $response, $exception);
@@ -256,7 +256,7 @@ class RestListener
      * Validates entity
      *
      * @param Request $request Request to get validation group
-     * @param object  $entity  Entity to be validated
+     * @param object $entity Entity to be validated
      *
      * @throws ApiException
      */
@@ -265,7 +265,7 @@ class RestListener
         try {
             $validationGroups = $this->apiManager->getValidationGroups($request);
             if (is_array($validationGroups) && count($validationGroups) > 0) {
-                $this->getLogger($request)->debug('Validating entity', array($entity));
+                $this->getLogger($request)->debug('Validating entity', [$entity]);
 
                 $propertiesValidator = $this->apiManager->createPropertiesValidator($request);
                 if ($propertiesValidator !== null) {
@@ -299,7 +299,7 @@ class RestListener
         $requestMapper = $this->apiManager->getRequestMapper($request);
         if ($requestMapper !== null) {
             $content = $request->getContent();
-            if ($content == '') {
+            if ((string)$content === '') {
                 $data = null;
             } else {
                 try {
@@ -324,7 +324,7 @@ class RestListener
 
             $this->validateEntity($request, $entity);
 
-            $request->attributes->add(array($requestMapper->getName() => $entity));
+            $request->attributes->add([$requestMapper->getName() => $entity]);
         }
     }
 
@@ -351,7 +351,7 @@ class RestListener
 
             $this->validateEntity($request, $entity);
 
-            $request->attributes->add(array($requestQueryMapper->getName() => $entity));
+            $request->attributes->add([$requestQueryMapper->getName() => $entity]);
         }
     }
 

@@ -61,4 +61,4 @@ class JsonpParams
     {
         return $this->parameter;
     }
-} 
+}

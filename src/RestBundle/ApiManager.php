@@ -20,15 +20,12 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Paysera\Bundle\RestBundle\Entity\ErrorConfig;
 use Paysera\Bundle\RestBundle\Exception\ConfigurationException;
-
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-
 use Paysera\Component\Serializer\Encoding\DecoderInterface;
 use Paysera\Bundle\RestBundle\Service\FormatDetector;
 use Paysera\Bundle\RestBundle\Entity\Error;
 use Paysera\Component\Serializer\Encoding\EncoderInterface;
 use Paysera\Bundle\RestBundle\Exception\ApiException;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -79,11 +76,11 @@ class ApiManager
     private $formatDetector;
 
     /**
-     * @param FormatDetector     $formatDetector
-     * @param LoggerInterface    $logger
+     * @param FormatDetector $formatDetector
+     * @param LoggerInterface $logger
      * @param ValidatorInterface $validator
      * @param NormalizerInterface $errorNormalizer
-     * @param string             $routingAttribute
+     * @param string $routingAttribute
      */
     public function __construct(
         FormatDetector $formatDetector,
@@ -109,7 +106,7 @@ class ApiManager
      * Adds API to manager. Should be called from configuration or dependency injection compiler
      *
      * @param RestApi $restApi
-     * @param string  $uriPattern
+     * @param string $uriPattern
      */
     public function addApiByUriPattern(RestApi $restApi, $uriPattern)
     {
@@ -120,7 +117,7 @@ class ApiManager
      * Adds API to manager. Should be called from configuration or dependency injection compiler
      *
      * @param RestApi $restApi
-     * @param string  $apiKey
+     * @param string $apiKey
      */
     public function addApiByKey(RestApi $restApi, $apiKey)
     {
@@ -131,7 +128,7 @@ class ApiManager
      * Adds encoder
      *
      * @param EncoderInterface $encoder
-     * @param string           $format
+     * @param string $format
      */
     public function addEncoder(EncoderInterface $encoder, $format)
     {
@@ -142,7 +139,7 @@ class ApiManager
      * Adds decoder
      *
      * @param DecoderInterface $decoder
-     * @param string           $format
+     * @param string $format
      */
     public function addDecoder(DecoderInterface $decoder, $format)
     {
@@ -163,7 +160,7 @@ class ApiManager
      * Creates response for exception if some API is answering to this request.
      * If not, null is returned
      *
-     * @param Request    $request
+     * @param Request $request
      * @param Exception $exception
      *
      * @throws Exception|ApiException
@@ -174,21 +171,21 @@ class ApiManager
     {
         try {
             $api = $this->getApiForRequest($request);
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException $runtimeException) {
             return new Response('', 500);
         }
 
-        if ($api) {
+        if ($api !== null) {
             $error = $this->createErrorFromException($exception);
             $this->fillErrorDefaults($error, $api);
             try {
                 $encoder = $this->getEncoderForApi($request, $api);
                 $result = $encoder->encode($this->errorNormalizer->mapFromEntity($error));
-                $headers = array('Content-Type' => $encoder->getContentType());
+                $headers = ['Content-Type' => $encoder->getContentType()];
             } catch (ApiException $exception) {
                 if ($exception->getErrorCode() === $exception::NOT_ACCEPTABLE) {
                     $result = $error->getMessage();
-                    $headers = array('Content-Type' => 'text/plain');
+                    $headers = ['Content-Type' => 'text/plain'];
                 } else {
                     throw $exception;
                 }
@@ -208,7 +205,7 @@ class ApiManager
     public function getRequestMapper(Request $request)
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $api->getRequestMapper($request->attributes->get('_controller'));
         }
         return null;
@@ -224,7 +221,7 @@ class ApiManager
     public function getRequestQueryMapper(Request $request)
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $api->getRequestQueryMapper($request->attributes->get('_controller'));
         }
         return null;
@@ -232,20 +229,21 @@ class ApiManager
 
     /**
      * Returns validation group for this request
-     * 
+     *
      * @param Request $request
-     * 
+     *
      * @return array
      */
     public function getValidationGroups(Request $request)
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $api->getValidationGroups($request->attributes->get('_controller'));
         }
-        
+
         return null;
     }
+
     /**
      * @param Request $request
      *
@@ -254,7 +252,7 @@ class ApiManager
     public function createPropertiesValidator(Request $request)
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             $pathConverters = $api->getPropertyPathConverters($request->attributes->get('_controller'));
             if ($this->propertyPathConverter !== null) {
                 $pathConverters[] = $this->propertyPathConverter;
@@ -281,7 +279,7 @@ class ApiManager
     public function getRequestLoggingParts(Request $request)
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $api->getRequestLoggingParts($request->attributes->get('_controller'));
         }
         return null;
@@ -296,11 +294,11 @@ class ApiManager
      */
     public function getRequestAttributeResolvers(Request $request)
     {
-        $requestAttrResolvers = array();
+        $requestAttrResolvers = [];
 
         $api = $this->getApiForRequest($request);
-        if ($api) {
-            $requestAttrResolvers  = $api->getRequestAttributeResolvers($request->attributes->get('_controller'));
+        if ($api !== null) {
+            $requestAttrResolvers = $api->getRequestAttributeResolvers($request->attributes->get('_controller'));
         }
         return $requestAttrResolvers;
     }
@@ -309,14 +307,14 @@ class ApiManager
      * Returns response mapper for this request
      *
      * @param Request $request
-     * @param array   $options
+     * @param array $options
      *
      * @return NormalizerInterface|null
      */
-    public function getResponseMapper(Request $request, array $options = array())
+    public function getResponseMapper(Request $request, array $options = [])
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $api->getResponseMapper($request->attributes->get('_controller'), $options);
         }
         return null;
@@ -326,14 +324,14 @@ class ApiManager
      * Returns cache strategy for this request
      *
      * @param Request $request
-     * @param array   $options
+     * @param array $options
      *
      * @return CacheStrategyInterface|null
      */
-    public function getCacheStrategy(Request $request, array $options = array())
+    public function getCacheStrategy(Request $request, array $options = [])
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $api->getCacheStrategy($request->attributes->get('_controller'), $options);
         }
         return null;
@@ -343,14 +341,14 @@ class ApiManager
      * Returns encoder for this request
      *
      * @param Request $request
-     * @param array   $options
+     * @param array $options
      *
      * @return EncoderInterface|null
      */
-    public function getEncoder(Request $request, array $options = array())
+    public function getEncoder(Request $request, array $options = [])
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $this->getEncoderForApi($request, $api, $options);
         }
         return null;
@@ -366,7 +364,7 @@ class ApiManager
     public function getDecoder(Request $request)
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $this->getDecoderForApi($request, $api);
         }
         return null;
@@ -382,7 +380,7 @@ class ApiManager
     public function getSecurityStrategy(Request $request)
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $api->getSecurityStrategy();
         }
         return null;
@@ -390,7 +388,7 @@ class ApiManager
 
     /**
      * @param PropertyPathConverterInterface|null $propertyPathConverter
-     * 
+     *
      * @return $this
      */
     public function setPropertyPathConverter($propertyPathConverter)
@@ -403,7 +401,7 @@ class ApiManager
     public function getLogger(Request $request)
     {
         $api = $this->getApiForRequest($request);
-        if ($api) {
+        if ($api !== null) {
             return $api->getLogger();
         }
         return null;
@@ -493,7 +491,7 @@ class ApiManager
                     ->setCode(ApiException::NOT_FOUND)
                     ->setStatusCode($exception->getStatusCode())
                     ->setMessage('Used method is not allowed for this url')
-                    ;
+                ;
             } elseif ($exception->getStatusCode() === 401) {
                 return Error::create()->setCode(ApiException::UNAUTHORIZED);
             } elseif ($exception->getStatusCode() === 403) {
@@ -509,7 +507,7 @@ class ApiManager
     /**
      * Fills error fields with defaults from configuration. Returns the same error object
      *
-     * @param Error   $error
+     * @param Error $error
      * @param RestApi $api
      *
      * @return Error
@@ -535,12 +533,12 @@ class ApiManager
      *
      * @param Request $request
      * @param RestApi $api
-     * @param array   $options
+     * @param array $options
      *
      * @return EncoderInterface
      * @throws Exception|ConfigurationException
      */
-    protected function getEncoderForApi(Request $request, RestApi $api, array $options = array())
+    protected function getEncoderForApi(Request $request, RestApi $api, array $options = [])
     {
         $format = $this->formatDetector->getResponseFormat($request, $api->getAvailableResponseFormats());
         $encoder = $api->getEncoder($format, $options);
@@ -579,17 +577,17 @@ class ApiManager
      * Returns merged configuration for error code
      *
      * @param RestApi $api
-     * @param string  $errorCode
+     * @param string $errorCode
      *
-     * @return array    available keys: statusCode, message, uri; value can be null
+     * @return array available keys: statusCode, message, uri; value can be null
      */
     protected function getErrorConfig(RestApi $api, $errorCode)
     {
         $config = $api->getErrorConfig($errorCode);
         if ($config === null) {
-            $config = array();
+            $config = [];
         }
-        $globalConfig = $this->errorConfig->getConfig($errorCode) ?: array('statusCode' => 400);
+        $globalConfig = $this->errorConfig->getConfig($errorCode) ?: ['statusCode' => 400];
         foreach ($globalConfig as $key => $value) {
             if (!isset($config[$key])) {
                 $config[$key] = $value;

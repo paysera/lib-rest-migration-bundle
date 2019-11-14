@@ -22,12 +22,12 @@ class SerializerErrorBuilderAdapter implements ErrorBuilderInterface
     public function createErrorFromException(Exception $exception): Error
     {
         if ($exception instanceof InvalidDataException) {
-            $violations = array_map(function(Violation $violation) {
+            $violations = array_map(function (Violation $violation) {
                 return (new Violation())
                     ->setCode($violation->getCode())
                     ->setField($violation->getField())
                     ->setMessage($violation->getMessage())
-                    ;
+                ;
             }, $exception->getViolations());
 
             return Error::create()

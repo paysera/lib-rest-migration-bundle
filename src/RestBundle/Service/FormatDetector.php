@@ -21,12 +21,12 @@ class FormatDetector
      * First look to _format from routing, then checks Accept header. If no such header was found, returns default
      * format. If no format is supported that is defined in the Accept header, exception is thrown.
      *
-     * @param Request  $request
+     * @param Request $request
      * @param string[] $formats
      *
      * @return string
      *
-     * @throws ApiException        with code not_acceptable
+     * @throws ApiException with code not_acceptable
      */
     public function getResponseFormat(Request $request, $formats)
     {
@@ -42,7 +42,7 @@ class FormatDetector
                 return reset($formats);
             }
             $format = $request->getFormat($mimetype);
-            if ($format !== null && in_array($format, $formats)) {
+            if ($format !== null && in_array($format, $formats, true)) {
                 return $format;
             }
         }
@@ -52,33 +52,33 @@ class FormatDetector
     /**
      * Returns format of data in request (using Content-Type header)
      *
-     * @param Request  $request
+     * @param Request $request
      * @param string[] $formats
      *
      * @return string
      *
-     * @throws ApiException        with code not_acceptable
+     * @throws ApiException with code not_acceptable
      */
     public function getRequestFormat(Request $request, $formats)
     {
-        $additionalFormats = array(
+        $additionalFormats = [
             'image/png' => 'png',
             'image/jpeg' => 'jpg',
             'image/gif' => 'gif',
-        );
+        ];
 
         $contentTypeHeader = $request->headers->get('Content-Type');
-        if (empty($contentTypeHeader)) {
+        if ((string)$contentTypeHeader === '') {
             return reset($formats);
         }
-        
+
         if (array_key_exists($contentTypeHeader, $additionalFormats)) {
             return $additionalFormats[$contentTypeHeader];
         }
 
         $format = $request->getFormat($contentTypeHeader);
 
-        if ($format === null || !in_array($format, $formats)) {
+        if ($format === null || !in_array($format, $formats, true)) {
             throw new ApiException(
                 ApiException::NOT_ACCEPTABLE,
                 'Content-Type of your request is not supported: ' . $contentTypeHeader

@@ -1,4 +1,5 @@
 <?php
+
 namespace Paysera\Bundle\RestBundle\Service;
 
 use Paysera\Bundle\RestBundle\ApiManager;
@@ -34,7 +35,7 @@ class ParameterToEntityMapBuilder
      */
     public function buildParameterToEntityMap(Request $request)
     {
-        $parameterToEntityMap = array();
+        $parameterToEntityMap = [];
         $requestAttributeResolvers = $this->apiManager->getRequestAttributeResolvers($request);
 
         foreach ($requestAttributeResolvers as $requestAttributeResolver) {
@@ -63,13 +64,13 @@ class ParameterToEntityMapBuilder
     ) {
         $attributes = $request->attributes->all();
 
-        if (empty($attributes[$attributeName])) {
+        if (!isset($attributes[$attributeName])) {
             $this->logger->warning(
                 'Could not find the specified attribute name in the request',
-                array(
+                [
                     'expected attribute' => $attributeName,
                     'received attributes' => $attributes,
-                )
+                ]
             );
             throw new InvalidDataException('Could not find the specified attribute name in the request');
         }
@@ -88,12 +89,12 @@ class ParameterToEntityMapBuilder
     private function resolveEntity(AttributeResolverInterface $requestAttributeResolver, $attributeValue)
     {
         $entity = $requestAttributeResolver->resolveFromAttributeValue($attributeValue);
-        $this->logger->debug('Resolved entity from attribute data to ', array($entity));
+        $this->logger->debug('Resolved entity from attribute data to ', [$entity]);
 
         if ($entity === null) {
             $this->logger->warning(
                 'Could not resolve entity from the attribute value',
-                array('attribute value ' => $attributeValue)
+                ['attribute value ' => $attributeValue]
             );
             throw new ApiException(
                 ApiException::NOT_FOUND,

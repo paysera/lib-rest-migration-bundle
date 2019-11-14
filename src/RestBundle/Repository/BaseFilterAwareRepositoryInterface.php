@@ -8,6 +8,8 @@ use Paysera\Component\Serializer\Exception\InvalidDataException;
 /**
  * Abstract interface BaseFilterAwareRepositoryInterface
  * Don't use directly, implement one of extended interfaces
+ *
+ * @php-cs-fixer-ignore Paysera/php_basic_feature_type_hinting_arguments
  */
 interface BaseFilterAwareRepositoryInterface
 {
