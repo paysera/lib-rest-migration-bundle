@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <imports>
+        <import resource="services/normalizers.xml"/>
+        <import resource="services/services.xml"/>
+    </imports>
+    
+    <services>
+        <service class="Paysera\Bundle\RestMigrationBundle\Service\SerializerErrorBuilderAdapter" 
+                 decorates="paysera_rest.error_builder"
+                 id="paysera_rest_migration.error_builder">
+            <argument type="service" id="paysera_rest_migration.error_builder.inner"/>
+        </service>
+    </services>
+</container>
