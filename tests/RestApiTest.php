@@ -16,9 +16,9 @@ class RestApiTest extends TestCase
     private $messageStorage;
     private $controllerKey;
 
-    public function __construct()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        parent::__construct();
+        parent::__construct($name, $data, $dataName);
         $this->messageStorage = [];
         $this->controllerKey = 'Key:Key';
     }

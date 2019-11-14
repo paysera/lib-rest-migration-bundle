@@ -21,9 +21,9 @@ class RoleAndIpStrategyTest extends TestCase
      */
     private $strategy;
 
-    public function __construct()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        parent::__construct();
+        parent::__construct($name, $data, $dataName);
         $this->roleHierarchy = [
             'ROLE_SUPER_ADMIN' => [
                 'ROLE_ADMIN',
