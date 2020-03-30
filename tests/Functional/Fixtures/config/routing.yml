@@ -1,0 +1,3 @@
+default:
+    resource: 'Paysera\Bundle\RestMigrationBundle\Tests\Functional\Fixtures\DefaultController'
+    type: annotation

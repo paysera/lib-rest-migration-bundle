@@ -5,44 +5,27 @@
 [![Build Status][ico-travis]][link-travis]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Bundle that allows migration from old configuration (v4) format to new one (v5) 
-in `paysera/lib-rest-bundle`.
+Bundle that allows easier migration from [`paysera/lib-rest-bundle`](https://github.com/paysera/lib-rest-bundle) 
+to [`paysera/lib-api-bundle`](https://github.com/paysera/lib-api-bundle).
 
-Basically it does two things:
-- maintains backward-compatibility with `paysera/lib-rest-bundle` `4.x` version;
-- adds support for `paysera/lib-normalization-bundle` when using old configuration format.
+It helps with the following:
+- supporting some of the old parameters and headers from `lib-rest-bundle` for use in `lib-api-bundle`;
+- supporting exceptions and some responsef from `lib-rest-bundle` for use in `lib-api-bundle`.
 
 ## Why?
 
-Classes for old configuration were not just deprecated in the main library – they
-were totally removed there to have fresh start, but copied in this library if you'd still like to
-use old format. It allows to migrate endpoint-by-endpoint using both configuration formats simultaneously.
-
-So, due to a bit strange nature of the bundle, it also includes classes and services from 
-`Paysera\Bundle\RestBundle` namespace – those which were deleted from `paysera/lib-rest-bundle` `5.0`
-version.
+For new functionality we should just use `lib-api-bundle` classes and parameters. For older ones, we still need
+to support backward compatibility while migrating, so it's easier to migrate in the following fashion:
+* change endpoints to use `lib-api-bundle`, but possibly with older parameters, exceptions etc.
+* support for new exceptions, parameters and other things comes by-default;
+* we can migrate the functionality, services, frontend to the new parameters;
+* we can clean up afterwards, using only newer functionality.
 
 ## Installation
 
 ```bash
 composer require paysera/lib-rest-migration-bundle
 ```
-
-## Configuration
-
-```yaml
-paysera_rest_migration_bundle:
-  property_path_converter: service_id # optional
-```
-
-## Usage
-
-Install and use `4.x` configuration in `lib-rest-bundle`, even when using `5.x` versions and above.
-Migrate when the opportunity appears, though.
-
-Keep in mind the changes in
-[CHANGELOG](https://github.com/paysera/lib-rest-bundle/blob/master/CHANGELOG.md) – some aspects
-were changed in-place and still broke backward-compatibility.
 
 ## Semantic versioning
 

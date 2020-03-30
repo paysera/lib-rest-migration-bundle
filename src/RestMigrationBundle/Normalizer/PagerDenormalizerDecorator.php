@@ -1,9 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Paysera\Bundle\RestMigrationBundle\Normalizer;
 
-use Paysera\Bundle\RestBundle\Normalizer\Pagination\PagerDenormalizer;
+use Paysera\Bundle\ApiBundle\Normalizer\Pagination\PagerDenormalizer;
 use Paysera\Component\Normalization\DenormalizationContext;
 use Paysera\Component\Normalization\ObjectDenormalizerInterface;
 use Paysera\Component\Normalization\TypeAwareInterface;

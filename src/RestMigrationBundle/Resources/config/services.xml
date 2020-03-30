@@ -8,12 +8,4 @@
         <import resource="services/normalizers.xml"/>
         <import resource="services/services.xml"/>
     </imports>
-    
-    <services>
-        <service class="Paysera\Bundle\RestMigrationBundle\Service\SerializerErrorBuilderAdapter" 
-                 decorates="paysera_rest.error_builder"
-                 id="paysera_rest_migration.error_builder">
-            <argument type="service" id="paysera_rest_migration.error_builder.inner"/>
-        </service>
-    </services>
 </container>

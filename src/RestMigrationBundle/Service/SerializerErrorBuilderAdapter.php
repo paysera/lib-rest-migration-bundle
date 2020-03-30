@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Paysera\Bundle\RestMigrationBundle\Service;
 
 use Exception;
-use Paysera\Bundle\RestBundle\Entity\Error;
-use Paysera\Bundle\RestBundle\Exception\ApiException;
-use Paysera\Bundle\RestBundle\Service\ErrorBuilderInterface;
+use Paysera\Bundle\ApiBundle\Entity\Error;
+use Paysera\Bundle\ApiBundle\Exception\ApiException;
+use Paysera\Bundle\ApiBundle\Service\ErrorBuilderInterface;
 use Paysera\Component\Serializer\Entity\Violation;
 use Paysera\Component\Serializer\Exception\InvalidDataException;
 
@@ -30,8 +31,8 @@ class SerializerErrorBuilderAdapter implements ErrorBuilderInterface
                 ;
             }, $exception->getViolations());
 
-            return Error::create()
-                ->setCode(ApiException::INVALID_PARAMETERS)
+            return (new Error())
+                ->setCode($exception->getCustomCode() ?: ApiException::INVALID_PARAMETERS)
                 ->setMessage($exception->getMessage())
                 ->setStatusCode(400)
                 ->setProperties($exception->getProperties())
